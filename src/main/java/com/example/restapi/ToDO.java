@@ -15,7 +15,6 @@ public class ToDO {
     private String description;
     private boolean isDone;
 
-
     public void setId(Integer id){
         this.id = id;
     }

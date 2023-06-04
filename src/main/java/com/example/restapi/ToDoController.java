@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 public class ToDoController {
 
@@ -13,13 +15,20 @@ public class ToDoController {
 
     @GetMapping("/todo")
     public ResponseEntity<ToDO> get(@RequestParam(value = "id") int id){
+       //mock implementation
+      // ToDO newTodo = new ToDO();
+     // newTodo.setId(id);
+     // newTodo.setDescription("Buy");
+      //newTodo.setIsDone(true);
 
-      ToDO newTodo = new ToDO();
-      newTodo.setId(id);
-      newTodo.setDescription("Buy");
-      newTodo.setIsDone(true);
+        //get todo from db by id
+        Optional<ToDO> toDoInDB = toDoRepository.findById(id);
 
-        return new ResponseEntity<ToDO>(newTodo, HttpStatus.OK);
+        if(toDoInDB.isPresent()){
+            return new ResponseEntity<ToDO>(toDoInDB.get(), HttpStatus.OK);
+        }
+
+        return new ResponseEntity("No toDo found with id " + id, HttpStatus.NOT_FOUND);
     }
 
 
