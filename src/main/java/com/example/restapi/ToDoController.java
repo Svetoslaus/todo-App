@@ -31,7 +31,11 @@ public class ToDoController {
         return new ResponseEntity("No toDo found with id " + id, HttpStatus.NOT_FOUND);
     }
 
-
+    @GetMapping("/todo/all")
+    public ResponseEntity<Iterable<ToDO>> getAll(){
+        Iterable<ToDO> getAllTodosInDB = toDoRepository.findAll();
+        return new ResponseEntity<Iterable<ToDO>>(getAllTodosInDB, HttpStatus.OK);
+    }
 
     @PostMapping("/todo")
     public ResponseEntity<ToDO> create(@RequestBody ToDO newTodo){
