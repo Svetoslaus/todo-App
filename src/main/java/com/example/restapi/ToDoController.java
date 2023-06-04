@@ -44,4 +44,46 @@ public class ToDoController {
         return new ResponseEntity<ToDO>(newTodo, HttpStatus.OK);
     }
 
+    @DeleteMapping("/todo")
+    public ResponseEntity delete(@RequestParam(value = "id") int id){
+
+        Optional<ToDO> toDoInDB = toDoRepository.findById(id);
+
+        if(toDoInDB.isPresent()){
+            toDoRepository.deleteById(id);
+            return new ResponseEntity("ToDo deleted", HttpStatus.OK);
+        }
+
+        return new ResponseEntity("There is no object to delete with id " + id, HttpStatus.NOT_FOUND);
+    }
+
+    @PutMapping("/todo")
+    public ResponseEntity<ToDO> edit(@RequestBody ToDO editedToDo){
+
+        Optional<ToDO> toDoInDB = toDoRepository.findById(editedToDo.getId());
+        if(toDoInDB.isPresent()){
+            ToDO savedToDo = toDoRepository.save(editedToDo);
+            return new ResponseEntity<ToDO>(savedToDo, HttpStatus.OK);
+        }
+
+        return new ResponseEntity("No object to update found with id " + editedToDo.getId(), HttpStatus.OK);
+    }
+
+    @PatchMapping("/todo/setDone")
+    public ResponseEntity<ToDO> setDone(@RequestParam(value="isDone") boolean isDone,
+                                         @RequestParam(value="id") int id){
+
+        Optional<ToDO> toDoinDB = toDoRepository.findById(id);
+
+        if(toDoinDB.isPresent()){
+            //update isDone
+            toDoinDB.get().setIsDone(isDone);
+            ToDO savedTodo = toDoRepository.save(toDoinDB.get());
+            return new ResponseEntity<ToDO>(savedTodo, HttpStatus.OK);
+        }
+
+        return new ResponseEntity("There is no object with this is to update " + id, HttpStatus.NOT_FOUND);
+
+    }
+
 }
