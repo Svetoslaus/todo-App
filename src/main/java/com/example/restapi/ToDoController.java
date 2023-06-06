@@ -13,6 +13,11 @@ public class ToDoController {
     @Autowired
     private ToDoRepository toDoRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+
+
     @GetMapping("/todo")
     public ResponseEntity<ToDO> get(@RequestParam(value = "id") int id){
        //mock implementation
@@ -32,9 +37,19 @@ public class ToDoController {
     }
 
     @GetMapping("/todo/all")
-    public ResponseEntity<Iterable<ToDO>> getAll(){
-        Iterable<ToDO> getAllTodosInDB = toDoRepository.findAll();
-        return new ResponseEntity<Iterable<ToDO>>(getAllTodosInDB, HttpStatus.OK);
+    public ResponseEntity<Iterable<ToDO>> getAll(@RequestHeader("api-secret") String secret){
+        System.out.println(secret);
+
+        var userBySecret = userRepository.findBySecret(secret);
+
+        if(userBySecret.isPresent()){
+            Iterable<ToDO> getAllTodosInDB = toDoRepository.findAllByUserId(userBySecret.get().getId());
+            return new ResponseEntity<Iterable<ToDO>>(getAllTodosInDB, HttpStatus.OK);
+        }
+
+        return new ResponseEntity("Invalid api secret", HttpStatus.BAD_REQUEST);
+
+
     }
 
     @PostMapping("/todo")
